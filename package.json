@@ -1,0 +1,114 @@
+{
+  "name": "Ah-Node-Backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": " node ./dist/server.js",
+    "start-dev": "ts-node ./src/server.ts",
+    "build-dev": "tsc && npm start",
+    "dev": "nodemon -e ts -w ./src -x npm run start-dev",
+    "test": "cross-env NODE_ENV=test npm run reset:db && nyc --reporter=html --reporter=text mocha --require @babel/polyfill -r ts-node/register src/*/**/**/*spec.ts src/*/**/*.spec.ts src/**/*.spec.ts --timeout 10000 --exit",
+    "test:seed": "NODE_ENV=test npm run reset:db && nyc --reporter=html --reporter=text mocha --require @babel/polyfill --require @babel/register ./dist --timeout 10000 --exit",
+    "sequelize": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize $*",
+    "migrate": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize db:migrate",
+    "reset:seeds": "npm run sequelize db:seed:undo:all && npm run sequelize db:seed:all",
+    "reset:db": "npm run sequelize db:migrate:undo:all && npm run sequelize db:migrate && npm run reset:seeds",
+    "build": "rm -rf dist && tsc && npm run reset:db",
+    "lint": "tsc --noEmit && eslint 'src/*/**/*.{js,ts,tsx}' --quiet --fix",
+    "coverage": "nyc report --reporter=text-lcov|coveralls"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "git add"
+    ]
+  },
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "exclude": [
+      "**/*.d.ts",
+      "**/*.spec.ts",
+      "coverage",
+      "dist",
+      "src/database/migrations",
+      "src/database/seeders"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      ".git",
+      "node_modules"
+    ],
+    "watch": [
+      "src"
+    ],
+    "exec": "npm run start-dev",
+    "ext": "ts"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && lint-staged"
+    }
+  },
+  "author": "mitchell",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/polyfill": "^7.4.4",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "coveralls": "^3.0.6",
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "pg": "^7.12.1",
+    "sequelize": "^5.17.1",
+    "sequelize-cli": "^5.5.0",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.6.2"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "@types/cors": "^2.8.6",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^4.17.1",
+    "@types/mocha": "^5.2.7",
+    "@types/morgan": "^1.7.37",
+    "@types/sequelize": "^4.28.4",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
+    "babel-eslint": "^10.0.3",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^6.2.2",
+    "eslint-config-prettier": "^6.1.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.2.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "husky": "^3.0.4",
+    "lint-staged": "^9.2.5",
+    "mocha": "^6.2.0",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.19.1",
+    "nyc": "^14.1.1",
+    "prettier": "^1.18.2",
+    "sinon": "^7.4.1",
+    "sinon-chai": "^3.3.0",
+    "sinon-express-mock": "^2.2.1"
+  }
+}
